@@ -30,22 +30,30 @@ func reply(msg *gateway.MessageCreateEvent, reply string) {
 }
 
 const (
-	JustAsk        = "https://dontasktoask.com/"
-	CheckThePins   = "<a:checkpins:859804429536198676>"
-	MentionHelp    = "Rule 9: Don't dm or mention for support"
-	ElaborateHelp  = "We can't help you if you don't tell us your issue. "
-	InstallPlugins = "https://aliucord.com/files/tut/InstallPlugins.mp4" // people would rather watch a video than opening the docu so
-	InstallThemes  = "https://aliucord.com/files/tut/InstallThemes.mp4"  // ven owes me a million dollars, now with themer install
-	CreateThemes   = "Read this documentation: https://github.com/Aliucord/documentation/tree/main/theme-dev"
-	ThemeSounds    = "https://aliucord.com/files/tut/ThemeSounds.mp4" // sounds
-	// GetSound         = "https://cdn.discordapp.com/attachments/875213883776847873/1007312170868019210/20220811_103613.mp4"
+	JustAsk       = "https://dontasktoask.com/"
+	CheckThePins  = "<a:checkpins:859804429536198676>"
+	MentionHelp   = "Rule 9: Don't dm or mention for support"
+	ElaborateHelp = "We can't help you if you don't tell us your issue. "
+
+	// ✅ NEW GUIDES (YutaPlug)
+	BeginnerGuide = "https://yutaplug.github.io/Aliucord/beginner"
+	ThemerGuide   = "https://yutaplug.github.io/Aliucord/themer"
+	ForksGuide    = "https://yutaplug.github.io/Aliucord/forks"
+	SoundsGuide   = "https://yutaplug.github.io/Aliucord/sounds"
+	UserPFPBG     = "https://yutaplug.github.io/Aliucord/userpfpbg"
+	FindPlugins   = "https://yutaplug.github.io/Aliucord/findplugins"
+	NewUIGuide    = "https://yutaplug.github.io/Aliucord/newui"
+	Backports     = "https://yutaplug.github.io/Aliucord/backports"
+	Changelog     = "https://yutaplug.github.io/Aliucord/changelog"
+	TokenGuide    = "https://yutaplug.github.io/Aliucord/token"
+	OldUIGuide    = "https://yutaplug.github.io/Aliucord/oldui"
+
 	FullTransparency = "1. Are you using a theme that requires full transparency? If the answer is no, then that's the problem. Normally in the description says what transparency you need to use. 2. Are you using a custom ROM? If the answer is yes, then we can't do nothing about it."
-	SearchThemes     = "Check <#824357609778708580> and search on there, maybe there's the theme you want"
-	AliuCrash        = "Send crashlogs (check Crashes in Settings, and copy the most recent), if there aren't any crashlogs, then we can't do nothing about it. (If you want, you can try send a logcat, check <https://pastebin.com/pNhXwhrd>)"
-	FreeNitro        = "Not possible. Nitrospoof exists for \"free\" emotes, UserBG exists for using a custom banner (read the plugin's description), UserPFP exists for using a custom profile picture (read the description of that too), for anything else buy nitro."
+	AliuCrash        = "Send crashlogs (check Crashes in Settings, and copy the most recent), if there aren't any crashlogs, then we can't do nothing about it."
+	FreeNitro        = "Not possible. Nitrospoof exists for \"free\" emotes, UserBG exists for using a custom banner, UserPFP exists for using a custom profile picture."
 	Usage            = "Go to the plugin's repository and read the readme. Chances are the dev added a description."
-	BetterInternet   = "This happens when you have an old/misbehaving router. Use mobile data (~120mb usage) or maybe a VPN (*or just get better internet*)."
-	PluginDownloader = "PluginDownloader is now a part of Aliucord. (It won't be present in the plugin list) If the option to download plugins is still missing, update Aliucord."
+	BetterInternet   = "This happens when you have an old/misbehaving router. Use mobile data or maybe a VPN."
+	PluginDownloader = "PluginDownloader is now a part of Aliucord. If download is missing, update Aliucord."
 )
 
 func initAutoReplies() {
@@ -55,8 +63,8 @@ func initAutoReplies() {
 	}
 
 	PRD := fmt.Sprintf("%s 👉 <#%s>", CheckThePins, cfg.PRD)
-	FindPlugin := fmt.Sprintf("Search in <#%s> and <#%s>. If it doesn't exist, then %s in <#%s>",
-		cfg.PluginsList, cfg.NewPlugins, CheckThePins, cfg.PRD)
+	FindPluginGuide := fmt.Sprintf("Search in <#%s> and <#%s>. If it doesn't exist, check %s",
+		cfg.PluginsList, cfg.NewPlugins, FindPlugins)
 
 	autoRepliesString := map[string]string{
 		"a plugin to":           PRD,
@@ -68,23 +76,28 @@ func initAutoReplies() {
 	}
 
 	autoRepliesRegex := map[*regexp.Regexp]string{
-		r("^(?:i need )?help(?: me)?$"):                                                            ElaborateHelp,
-		r("<@!?\\d{2,19}> help"):                                                                   MentionHelp,
-		r("help <@!?\\d{2,19}>"):                                                                   MentionHelp,
-		r("animated (profile|avatar|pfp)"):                                                         FreeNitro,
-		r("is there a plugin.+"):                                                                   FindPlugin,
-		r("^where(?: i)?'?s(?: the )?.+ plugin$"):                                                  FindPlugin,
-		r("^can (?:someone|anybody|anyone|you) help(?: me)?\\??$"):                                 JustAsk,
-		r("(can.?not|can'?t) (download|find|get) plugin downloader"):                               PluginDownloader,
-		r("where( i)?'?s( the)? plugin downloader"):                                                PluginDownloader,
-		r("(?:where|how) (?:to|do i|do you) (?:install|download|get) a? ?plugins?"):                InstallPlugins,
-		r("how (?:to|do i|do you|i) (?:install|download|apply|get|use) a? ?themes?"):               InstallThemes,
-		r("how (?:to|do i|do you|can i) (?:create|make|do) (?:a|my own)? ?(?:custom)? ?themes?"):   CreateThemes,
-		r("how (?:to|do i|do you|can i|put) (?:change|upload|add|set) (?:sounds?|custom sounds?)"): ThemeSounds,
-		// r("how (?:to|do i|do you|can i) get sounds?(?: url| link)?"):                                                       GetSound,
-		r("(?:does anyone know|is there) an? (?:\\w.+)?theme"):                                                             SearchThemes,
-		r("(?:my )?aliucord (?:\\w.+)?(?:crashed|keeps crashing|crash|crashes|is crashing|crashing|stopped(?: working)?)"): AliuCrash,
-		r("(?:why |with )?(?:is )?full transparency (?:is?.?not|will not|doesn\\'t|does not) (?:work)"):                    FullTransparency,
+		r("^(?:i need )?help(?: me)?$"):                            ElaborateHelp,
+		r("<@!?\\d{2,19}> help"):                           MentionHelp,
+		r("help <@!?\\d{2,19}>"):                           MentionHelp,
+		r("animated (profile|avatar|pfp)"):                 FreeNitro,
+		r("is there a plugin.+"):                           FindPluginGuide,
+		r("^where(?: i)?'?s(?: the )?.+ plugin$"):          FindPluginGuide,
+		r("^can (?:someone|anybody|anyone|you) help\??$"): JustAsk,
+
+		// ✅ UPDATED GUIDE RESPONSES
+		r("how (?:to|do i|do you) install aliucord"): BeginnerGuide,
+		r("how (?:to|do i|do you) use themer"):         ThemerGuide,
+		r("how (?:to|do i|do you) add sounds"):         SoundsGuide,
+		r("how (?:to|do i|do you) change pfp|bg"):      UserPFPBG,
+		r("new ui"):                                     NewUIGuide,
+		r("old ui"):                                     OldUIGuide,
+		r("forks"):                                      ForksGuide,
+		r("backport"):                                   Backports,
+		r("changelog"):                                  Changelog,
+		r("token"):                                      TokenGuide,
+
+		r("aliucord (crashed|keeps crashing|crash|crashes)"): AliuCrash,
+		r("full transparency not work"):                   FullTransparency,
 	}
 
 	s.AddHandler(func(msg *gateway.MessageCreateEvent) {
@@ -97,8 +110,6 @@ func initAutoReplies() {
 			if c.ID != cfg.PRD && c.ParentID != cfg.SupportCategory {
 				return
 			}
-		} else {
-			logger.Println(err)
 		}
 
 		for _, role := range msg.Member.RoleIDs {
